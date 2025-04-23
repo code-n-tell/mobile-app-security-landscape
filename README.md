@@ -16,6 +16,8 @@ Follow these steps to visualise the diagram:
 2. Copy the repository code into the editor's text field.
 3. Render the diagram to view the feature–component–control relationships.
 
+> **Note:** Refer to the [PlantUML MindMap syntax](https://plantuml.com/mindmap-diagram) for details on how to structure and extend mind map diagrams.
+
 ## Contributing
 
 Contributions are welcome and appreciated! If you have an idea or suggestion to improve this project:
