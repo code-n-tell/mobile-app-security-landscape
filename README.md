@@ -8,6 +8,14 @@ This PoC demonstrates PlantUML’s ability to model feature–component–contro
 - [ ] Identify key components associated with the control statements.
 - [ ] Identify features or user stories associated with the key components.
 
+## Setup Instructions
+
+Follow these steps to visualise the diagram:
+
+1. Navigate to [PlantUML](https://plantuml.com/) or [PlantText](https://www.planttext.com/).
+2. Copy the repository code into the editor's text field.
+3. Render the diagram to view the feature–component–control relationships.
+
 ## Contributing
 
 Contributions are welcome and appreciated! If you have an idea or suggestion to improve this project:
