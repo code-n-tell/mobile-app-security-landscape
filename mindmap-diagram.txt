@@ -1,0 +1,83 @@
+@startmindmap
+
+<style>
+
+node {
+}
+
+</style>
+
+* mobile-app
+    * feature
+        * component (what's being used?)
+            *_ control
+    * micro-copy
+        * error messages
+        * confirmation prompts
+        * loading indicators
+    * transfer money
+        * ?
+            *_ Initiate a transaction verification or confirmation call
+            *_ Provide a real-time transaction history
+            *_ Implement a cooldown period of 12 hours to 24 hours
+            *_ Disable overseas transactions by default and enable only through MFA
+            *_ Allow users to terminate active sessions
+    * sign-in
+        * Rate limiting
+        * Anti-automation checks
+        * Progressive incremental time delays
+        * Account lockout
+        * Multi-factor authentication
+            *_ Implement at least 2 authentication factors
+        * Single sign-on
+        * Passkey
+        * Password
+            *_ Enforce a minimum length of 12 characters
+            *_ Set a reasonable maximum password length
+            *_ Reject use of personal details
+            *_ Reject sequential patterns (e.g.,123456)
+            *_ Reject repeated characters (e.g., aaaaa)
+            *_ Reject common words, phrases, or combinations
+            *_ Enforce credential rotation
+        * One-time password
+            *_ Use time-based
+            *_ Enforce a minimum length of 6 characters
+            *_ Invalidate after 30s
+            *_ Invalidate after 3 consecutive incorrect inputs are received
+            *_ Revoke user session after 3 consecutive incorrect inputs are received;
+        * Biometric (client-side)
+            *_ CryptoObject 
+            *_ Android Protected Confirmation
+            *_ Keychain services
+            *_ Force the app to re-authenticate if there's modification to the biometric
+        * Biometric (server-side)
+            *_ Use a trusted server-side biometric identification platform
+            *_ Force the app to re-authenticate if there's modification to the biometric
+        * Device location
+        * Device type
+        * Session cookie?
+            *_ Identify server-side endpoints that expose sensitive data or critical functionalities
+            *_ Reject requests with missing or invalid session IDs or tokens
+            *_ Generate session IDs randomly on the server side without appending them to URLs
+            *_ Enhance session ID security with proper length and entropy
+            *_ Exchange session IDs only over secure HTTPs connections
+            *_ Avoid storing session IDs in persistent storage
+            *_ Verify session IDs for user access to privileged app elements
+            *_ Terminate sessions on the server side, deleting session information upon timeout or login
+            *_ Use trusted authentication platforms and protocols
+        * JWT token?
+            *_ Generate tokens on the server side without appending them to URLs
+            *_ Enhance tokens only over secure HTTPs connections
+            *_ Verify that no sensitive data is embedded in the token
+            *_ Avoid storing tokens in persistent storage
+            *_ Verify tokens for user access to privileged app elements
+            *_ Terminate tokens on the server side
+            *_ Delete token information upon timeout or logout
+            *_ Sign tokens cryptographically using a secure algorithm and avoid the use of null algorithms
+    * sign-out
+        * ?
+            *_ reauthenticate users after logging out, app inactivity, idleness, backgrounding, absolute session timeouts or abrupt/force closure
+            *_ Generate new session identifiers on the server whenever users move up to a new authentication level
+            *_ Clear and deauthorise all locally sotred tokens or session identifiers
+            *_ Determine the idle timeout value based on the risk of app transactions
+@endmindmap
