@@ -8,21 +8,21 @@ node {
 </style>
 
 *[#orange] mobile-app
-    * feature
+    *[#lightgreen] feature
         * component (what's being used?)
             *_ control
-    * data-sharing
-    * form-submission
-    * search
-    * file-upload
-    * customer-service
-    * web-browsing
-    * launch-app
-    * update-preferences
+    *[#lightgreen] data-sharing
+    *[#lightgreen] form-submission
+    *[#lightgreen] search
+    *[#lightgreen] file-upload
+    *[#lightgreen] customer-service
+    *[#lightgreen] web-browsing
+    *[#lightgreen] launch-app
+    *[#lightgreen] update-preferences
 
     left side
 
-    * sign-in
+    *[#lightgreen] sign-in (proof of claim)
         * Guest
         * Multi-factor authentication
             *_ Ensure at least {2} authentication factors
@@ -44,8 +44,6 @@ node {
             *_ Ensure biometric operations occur within the device’s {Secure Element}
             *_ Ensure biometric template never leaves the device  
             *_ Ensure hardware-backed keys tied to biometrics are invalidated on biometric changes
-        * Device location
-        * Device type
         * Session id
             *_ Disallow session ids that return HTTP response status code {401, 403} 
             *_ Ensure session ids are generated using cryptographically secure random number generator with a minimum of {n}-bits of entropy
@@ -69,25 +67,47 @@ node {
             *_ Ensure account access is suspended after {3} consecutive incorrect attempts
         * Anti-bot prevention - CAPTCHA
         * Error messages
-    * sign-out
+    *[#lightgreen] sign-out
         * Session id
             *_ Ensure user's session id is terminated and related data is invalidated after {n} seconds of logout / inactivity / app closure
         * JWT token
             *_ Ensure user's token is terminated and related data is invalidated after {n} seconds of logout / inactivity / app closure
             *_ Ensure invalid tokens return HTTP response status code {401, 403}
-    * update-transfer-funds-limit
+    *[#lightgreen] update-transfer-funds-limit
         * Fraud detection
             *_ Ensure a {12} hours cooling-off period
-    * transfer-funds-overseas
+    *[#lightgreen] transfer-funds-overseas
         * Fraud prevention
             *_ Ensure overseas transfer is disabled by default
             *_ Ensure overseas transfer is enabled through MFA
-    * transfer-funds
+    *[#lightgreen] transfer-funds
         * Session identifiers
             *_ Ensure existing session identifier is replaced with a new session identifier after step-up authentication 
             *_ Ensure user's session is terminated after {n} seconds of inactivity
+        * Fraud detection
+            *_ Ensure {in-app, email, sms} alerts are enabled
         * Fraud prevention
             *_ Ensure a transaction exceeding ${n} is confirmed by user response within {n} seconds
         * Transaction history
             *_ Ensure account balance is updated within {n} seconds of a transaction
+        * Alerts
+            *_ Disallow displaying sensitive data, like {username, password}
+
+    *[#lightgreen] access-resource
+        * Client-side authorisation
+            *_ Disallow client-side authorisation
+        * Role-based access control
+            *_ Disallow {*} permissions
+        * Time-based access control
+            *_ Ensure access is from {n} hours to {m} hours
+        * Context-based access control
+            *_ Ensure context, like {user patterns, user device type, user device location, user device state} are checked
+     
+    *[#lightgreen] grant-permission
+        * App manifest
+            *_ Disallow {CAMERA, LOCATION, MICROPHONE} permissions granted at intall-time
+        * Prompt dialog
+            *_ Ensure dialogs include the name of the permission {CAMERA}
+            *_ Ensure dialogs include a short explanation of why its needed {to take profile photos}
+            *_ Ensure dialogs include a description of the user benefit {so you can personalise your photos}
 @endmindmap
