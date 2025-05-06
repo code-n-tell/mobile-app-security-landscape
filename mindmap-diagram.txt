@@ -84,6 +84,44 @@ node {
             *_ Ensure overseas transfer is disabled by default
             *_ Ensure overseas transfer is enabled through MFA
     *[#lightgreen] transfer-funds
+        * form-funds-amount, recipient-info
+            *_ Root detection
+                *_ Ensure checks for the presence of {SU, superuser} binaries
+                *_ Ensure checks for the presence of system-level utility apps, like {SuperSU, Magisk Manager, KingRoot}
+                *_ Ensure checks for the presence of custom recovery environment, like {TWRP, Clockwork}
+                *_ Ensure checks for calls to unsafe system APIs, like {exec(), su}
+                *_ Ensure checks for the usage of restricted or system-level APIs
+                *_ Ensure checks for the presence of unofficial app stores, like {Cydia}
+                *_ Ensure checks for the modifications to kernel images, like {/boot.img}
+                *_ Ensure checks for the compromise of critical file system directories, like {/system, /data} 
+            *_ Emulator detection
+                *_ Ensure checks for abnormal battery state, like {battery always at 100%, not charging}
+                *_ Ensure checks for abnormal device uptime, like {under 30s}
+                *_ Ensure checks for more than {1} pointer
+                *_ Ensure checks for RAM less than {1} GB
+                *_ Ensure checks for reserved IP ranges, like {10.0.2.x, 192.168.56.x}
+                *_ Ensure checks for missing expected hardware sensors, like {accelerometer, gyroscope}
+                *_ Ensure checks for emulator signatures, like {build-host, test-keys}
+                *_ Ensure checks for emulator fingerprints, like {generic, unknown}
+                *_ Ensure checks for emulator traits, like {Genymotion, ranchu}
+                *_ Ensure checks for emulator services, like {com.genymotion.superuser}
+            *_ Malware detection 
+                *_ Ensure checks for obscured user interface elements
+                *_ Ensure checks for abnormal memory usage patterns, like {unexpected large memory chunks} 
+                *_ Ensure checks for known malware hashes, like {abcdef1234567890abcdef1234567890}
+            *_ Overlay, remote viewing and screenshot prevention
+                *_ Disallow other apps to draw overlays over it  
+                *_ Disallow remote screen sharing
+                *_ Disallow screenshots from being taken
+                *_ Ensure inputs are masked when the app is {backgrounded}
+        * application programming interface
+            *_ Hooking prevention
+                *_ Ensure blocking of code injections, like {DEX loading}
+                *_ Ensure checks for insecure parameters, like {obsolete API usage}
+                *_ Ensure the app terminates if its cryptographic signature has been tampered with 
+                *_ Ensure use of memory protection techniques, like {memory region marking}
+                *_ Ensure the app's source code is obfuscated
+        * database
         * Session identifiers
             *_ Ensure existing session identifier is replaced with a new session identifier after step-up authentication 
             *_ Ensure user's session is terminated after {n} seconds of inactivity
@@ -128,4 +166,11 @@ node {
         * application programming interface
         * database-relational (MySQL)
             *_ Ensure user-related records are deleted within {n} seconds after request
+    *[#lightgreen] download-app
+        * Mobile device
+            *_ App signing certificate 
+                *_ Ensure certificate was issued by a trusted certificate authority, like {Google, Apple}
+                *_ Ensure certificate has not {expired}
+        * App store
+        * App store account
 @endmindmap
