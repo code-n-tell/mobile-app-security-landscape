@@ -7,31 +7,68 @@ node {
 
 </style>
 
-*[#orange] mobile-app
-    *[#lightgreen] feature
-        * component (what's being used?)
+/'
+lowest form w/o security
+- download-app: mobile-device > app-store > app-store-account
+- setup-account: username > api > database
+- sign-in: username > api > database
+- grant-permission: app-manifest > api > dialog
+- transfer-funds: account-number, monetary-amount > api > database
+- update-transfer-funds-limit: monetary-amount > api > database
+- transfer-funds-overseas: monetary-amount, -currency > api > database
+- get-premium: username > api > database
+- update-preferences: language > api > database-key-value
+- web-browsing: url-link > api > web-view, browser > dns-server > web-server
+- delete-account: username > api > database-relational
+- sign-out: session-id > api > database
+'/
+
+*[#FFA07A] mobile-app
+    *[#FFFFE0] component, like input
+    *[#90EE90] component, like middleware
+    *[#ADD8E6] component, like output
+        *[#FFBBCC] threat
             *_ control
-    *[#lightgreen] update-transfer-funds-limit
-        * form-amount
+                *_ child-control
+    *[#FFFFE0] session-id
+    *[#FFFFE0] url-link
+    *[#FFFFE0] language
+    *[#FFFFE0] app-manifest
+        *[#FFBBCC] threat
+            *_ Disallow {CAMERA, LOCATION, MICROPHONE} permissions granted at intall-time
+    *[#FFFFE0] username
+        *[#FFBBCC] threat
+            *_ Ensure username is tokenised with at least {128} bits
+            *_ Ensure the use of anti-bot mechanisms, like {ReCaptcha}
+        *[#FFBBCC] threat
+            *_ Biometric
+                *_ Ensure cryptographic keys are stored in a {Secure Element}
+                *_ Ensure biometric operations occur within a {Secure Element}
+                *_ Ensure cryptographic keys tied to biometrics are invalidated on biometric changes
+            *_ Password
+                *_ Ensure passwords are hashed with {Argon2id} key derivation function 
+                *_ Ensure passwords are salted randomly with at least {16} bytes
+                *_ Ensure a minimum length of {12} characters
+                *_ Ensure a maximum length of {x} characters
+                *_ Disallow the use of personal details, like {username, password}
+                *_ Disallow the use of sequential patterns, like {123456}
+                *_ Disallow the use of repeated characters, like {aaaaaa}
+                *_ Disallow the use of common words, phrases, or combinations, like {Qwerty123}
+                *_ Ensure the credential is rotated every {365} days
+                *_ Ensure account access is rate limited with {3} tries every {10} minutes
+                *_ Ensure account access is incrementally delayed after {3} consecutive incorrect attempts, with the delay increasing {base delay x multiplier ^ (attempt-1)} each time, capped at {1440} minutes
+                *_ Ensure account access is suspended after {3} consecutive incorrect attempts
+            *_ Multi-factor authentication
+                *_ Ensure at least {2} authentication factors
+            *_ Single sign-on
+            *_ Passkey
+            *_ One-time password
+                *_ Ensure a minimum length of {6} characters
+                *_ Ensure the credential is invalidated every {30} seconds
+                *_ Ensure the credential is invalidated every {3} consecutive incorrect inputs are received
+    *[#FFFFE0] monetary-amount
+        *[#FFBBCC] threat
             *_ Ensure a {12} hours cooling-off
-        * application programming interface
-        * database
-    *[#lightgreen] transfer-funds-overseas
-        * form-amount
-        * form-currency
-            *_ Ensure overseas transfer is disabled by default
-            *_ Ensure overseas transfer is enabled through MFA
-        * application programming interface
-        * database            
-    *[#lightgreen] transfer-funds
-        * form-account-number
-            *_ Disallow displaying sensitive data, like {username, password}
-            *_ Overlay, remote viewing and screenshot prevention
-                *_ Disallow other apps to draw overlays over it  
-                *_ Disallow remote screen sharing
-                *_ Disallow screenshots from being taken
-                *_ Ensure inputs are masked when the app is {backgrounded}
-        * form-amount
             *_ Ensure a transaction exceeding ${n} is confirmed by user response within {n} seconds
             *_ Ensure account balance is updated within {n} seconds of a transaction
             *_ Ensure {in-app, email, sms} alerts are enabled
@@ -61,21 +98,71 @@ node {
                 *_ Ensure checks for abnormal memory usage patterns, like {unexpected large memory chunks} 
                 *_ Ensure checks for known malware hashes, like {abcdef1234567890abcdef1234567890}
             *_ App integrity check
+                *_ Ensure certificate was issued by a trusted certificate authority, like {Google, Apple}
+                *_ Ensure certificate has not {expired}
             *_ Device integrity check
-        * application programming interface
-            *_ Hooking prevention
-                *_ Ensure blocking of code injections, like {DEX loading}
-                *_ Ensure the app terminates if its cryptographic signature has been tampered with 
-                *_ Ensure use of memory protection techniques, like {memory region marking}
-                *_ Ensure the app's source code, like {code flow} is obfuscated
-            *_ Session management
-                * Session id
-                    *_ Ensure existing session identifier is replaced with a new session identifier after step-up authentication
-                    *_ Ensure user session is terminated after {3} consecutive incorrect attempts
-        * database
-    *[#lightgreen] get-premium
-        * application programming interface
-        * database
+                *_ Ensure secure element, like {Android's Trusty, Apple's Secure Enclave} exists
+    *[#FFFFE0] currency
+        *[#FFBBCC] threat
+            *_ Ensure overseas transfer is disabled by default
+            *_ Ensure overseas transfer is enabled through MFA
+    *[#FFFFE0] account-number
+        *[#FFBBCC] threat
+            *_ Disallow displaying sensitive data, like {username, password}
+            *_ Overlay, remote viewing and screenshot prevention
+                *_ Disallow other apps to draw overlays over it  
+                *_ Disallow remote screen sharing
+                *_ Disallow screenshots from being taken
+                *_ Ensure inputs are masked when the app is {backgrounded}
+    *[#ADD8E6] dialog
+        *[#FFBBCC] threat
+            *_ Ensure the name of the permission {CAMERA} is clearly communicated 
+            *_ Ensure the explanation for why a permission is needed is clearly communicated, like {to take profile photos}
+            *_ Ensure the user benefit of granting a permission is clearly communicated, like {so you can personalise your photos}
+    
+    left side
+
+    *[#90EE90] webview
+        *[#FFBBCC] threat
+            *_ Ensure cookies do not persist after app closure
+            *_ Ensure cookies with {HttpOnly, Secure} flags enabled
+    *[#90EE90] application programming interface
+        *[#FFBBCC] hooking
+            *_ Ensure blocking of code injections, like {DEX loading}
+            *_ Ensure the app terminates if its cryptographic signature has been tampered with 
+            *_ Ensure use of memory protection techniques, like {memory region marking}
+            *_ Ensure the app's source code, like {code flow} is obfuscated 
+        *[#FFBBCC] threat
+            *_ Session id management
+                *_ Ensure existing session identifier is replaced with a new session identifier after step-up authentication
+                *_ Ensure user session is terminated after {3} consecutive incorrect attempts
+                *_ Disallow session ids that return HTTP response status code {401, 403} 
+                *_ Ensure session ids are generated using cryptographically secure random number generator with a minimum of {n}-bits of entropy
+                *_ Ensure session ids are transmitted through HTTP headers like {Authorization}
+                *_ Ensure session ids are generated using cryptographically strong algorithm, like {SHA-256}
+                *_ Ensure session ids are used over {HTTPs}
+                *_ Disallow storing session ids in persistent storage, like {localStorage, sessionStorage}
+                *_ Ensure valid session ids return HTTP response status code {200}
+                *_ Ensure user's session id is terminated and related data is invalidated after {n} seconds of logout / inactivity / app closure
+            *_ Session token management
+                *_ Disallow tokens that return HTTP response status code {401, 403}
+                *_ Ensure tokens are generated using cryptographically secure random number generator with a minimum of {n}-bits of entropy
+                *_ Ensure tokens are transmitted through HTTP headers like {Authorization}
+                *_ Ensure bearer authentication is used over {HTTPs}
+                *_ Disallow the inclusion of sensitive data in a token, like {username, password}
+                *_ Disallow storing tokens in persistent storage, like {localStorage, sessionStorage}
+                *_ Ensure valid tokens return HTTP response status code {200}
+                *_ Ensure tokens are signed using cryptographically strong algorithm, like {HS256}
+                *_ Disallow tokens signed using algorithm, like {none}
+                *_ Ensure user's token is terminated and related data is invalidated after {n} seconds of logout / inactivity / app closure
+    *[#90EE90] database-key-value (sharedpreferences)
+        *[#FFBBCC] threat
+            *_ Ensure user-related preference is deleted {n} days after {m} requests
+    *[#90EE90] database-relational (MySQL)
+        *[#FFBBCC] threat
+            *_ Ensure user-related records are deleted within {n} seconds after request
+    *[#90EE90] database
+        *[#FFBBCC] threat
             *_ Disallow client-side authorisation
             *_ Role-based access control
                 *_ Disallow {*} permissions
@@ -83,101 +170,5 @@ node {
                 *_ Ensure access is from {n} hours to {m} hours
             *_ Context-based access control
                 *_ Ensure checks for context, like {user patterns, user device type, user device location, user device state, user device biometric}
-    *[#lightgreen] grant-permission
-        * app-manifest
-            *_ Disallow {CAMERA, LOCATION, MICROPHONE} permissions granted at intall-time
-        * dialog
-            *_ Ensure the name of the permission {CAMERA} is clearly communicated 
-            *_ Ensure the explanation for why a permission is needed is clearly communicated, like {to take profile photos}
-            *_ Ensure the user benefit of granting a permission is clearly communicated, like {so you can personalise your photos}
-    *[#lightgreen] update-preferences
-        * database-key-value (sharedpreferences)
-            *_ Ensure user-related preference is deleted {n} days after {m} requests
-    *[#lightgreen] web-browsing
-        * url-link
-        * cookie
-            *_ Ensure {webview, custom HTTP clients} cookies do not persist after app closure
 
-    left side
-
-    *[#lightgreen] download-app
-        * mobile-device
-            *_ App signing certificate 
-                *_ Ensure certificate was issued by a trusted certificate authority, like {Google, Apple}
-                *_ Ensure certificate has not {expired}
-        * app-store
-        * app-store account
-    *[#lightgreen] setup-account
-        * form-username
-            *_ Ensure username is tokenised with at least {128} bits
-            *_ Ensure the use of anti-bot mechanisms, like {ReCaptcha}
-        * application programming interface
-        * database
-    *[#lightgreen] sign-in
-        * form-username
-            *_ Biometric
-                *_ Ensure cryptographic keys are stored in a {Secure Element}
-                *_ Ensure biometric operations occur within a {Secure Element}
-                *_ Ensure cryptographic keys tied to biometrics are invalidated on biometric changes
-            *_ Password
-                *_ Ensure passwords are hashed with {Argon2id} key derivation function 
-                *_ Ensure passwords are salted randomly with at least {16} bytes
-                *_ Ensure a minimum length of {12} characters
-                *_ Ensure a maximum length of {x} characters
-                *_ Disallow the use of personal details, like {username, password}
-                *_ Disallow the use of sequential patterns, like {123456}
-                *_ Disallow the use of repeated characters, like {aaaaaa}
-                *_ Disallow the use of common words, phrases, or combinations, like {Qwerty123}
-                *_ Ensure the credential is rotated every {365} days
-                *_ Ensure account access is rate limited with {3} tries every {10} minutes
-                *_ Ensure account access is incrementally delayed after {3} consecutive incorrect attempts, with the delay increasing {base delay x multiplier ^ (attempt-1)} each time, capped at {1440} minutes
-                *_ Ensure account access is suspended after {3} consecutive incorrect attempts
-            *_ Multi-factor authentication
-                *_ Ensure at least {2} authentication factors
-            *_ Single sign-on
-            *_ Passkey
-            *_ One-time password
-                *_ Ensure a minimum length of {6} characters
-                *_ Ensure the credential is invalidated every {30} seconds
-                *_ Ensure the credential is invalidated every {3} consecutive incorrect inputs are received
-        * application programming interface
-            *_ Session management
-                * Session id
-                    *_ Disallow session ids that return HTTP response status code {401, 403} 
-                    *_ Ensure session ids are generated using cryptographically secure random number generator with a minimum of {n}-bits of entropy
-                    *_ Ensure session ids are transmitted through HTTP headers like {Authorization}
-                    *_ Ensure session ids are generated using cryptographically strong algorithm, like {SHA-256}
-                    *_ Ensure session ids are used over {HTTPs}
-                    *_ Disallow storing session ids in persistent storage, like {localStorage, sessionStorage}
-                    *_ Ensure valid session ids return HTTP response status code {200}
-                    *_ Ensure existing session identifier is replaced with a new session identifier after step-up authentication
-                * JWT token
-                    *_ Disallow tokens that return HTTP response status code {401, 403}
-                    *_ Ensure tokens are generated using cryptographically secure random number generator with a minimum of {n}-bits of entropy
-                    *_ Ensure tokens are transmitted through HTTP headers like {Authorization}
-                    *_ Ensure bearer authentication is used over {HTTPs}
-                    *_ Disallow the inclusion of sensitive data in a token, like {username, password}
-                    *_ Disallow storing tokens in persistent storage, like {localStorage, sessionStorage}
-                    *_ Ensure valid tokens return HTTP response status code {200}
-                    *_ Ensure tokens are signed using cryptographically strong algorithm, like {HS256}
-                    *_ Disallow tokens signed using algorithm, like {none}
-                * Cookie
-                    Ensure cookies with {HttpOnly, Secure} flags enabled
-        * database
-        * mobile-device
-            *_ Ensure secure element, like {Android's Trusty, Apple's Secure Enclave} exists 
-    *[#lightgreen] sign-out
-        * application programming interface
-            *_ Session management
-                * Session id
-                    *_ Ensure user's session id is terminated and related data is invalidated after {n} seconds of logout / inactivity / app closure
-                * JWT token
-                    *_ Ensure user's token is terminated and related data is invalidated after {n} seconds of logout / inactivity / app closure
-                    *_ Ensure invalid tokens return HTTP response status code {401, 403}
-        * database
-    *[#lightgreen] delete-account
-        * form-username
-        * application programming interface
-        * database-relational (MySQL)
-            *_ Ensure user-related records are deleted within {n} seconds after request
 @endmindmap
