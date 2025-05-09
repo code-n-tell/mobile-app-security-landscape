@@ -131,7 +131,25 @@ lowest form w/o security
             *_ Ensure blocking of code injections, like {DEX loading}
             *_ Ensure the app terminates if its cryptographic signature has been tampered with 
             *_ Ensure use of memory protection techniques, like {memory region marking}
-            *_ Ensure the app's source code, like {code flow} is obfuscated 
+            *_ Ensure the app's source code, like {code flow} is obfuscated
+        *[#FFBBCC] denial-of-service
+            *_ Ensure api access is rate limited with {3} tries every {10} minutes
+        *[#FFBBCC] injection
+            *_ Ensure numeric inputs fall within a range of {n} to {m}
+            *_ Disallow the inclusion of sensitive data in the output, like {username, password} 
+        *[#FFBBCC] man-in-the-middle
+            *_ Disallow protocols, like {HTTP}
+            *_ Ensure the use of protocols, like {HTTPs}
+            *_ Cipher suite
+                *_ Disallow algorithms that are {outdated with known vulnerabilities, formally deprecated}, like {RC4}
+                *_ Ensure the use of algorithms, like {TLS_AES_256_GCM_SHA384, TLS_AES_128_GCM_SHA256, TLS_AES_128_CCM_SHA256}
+            *_ SSL/TLS certificate
+                *_ Ensure certificates are issued by a trusted Certificate Authority (CA) at all levels of the chain: leaf certificate {...}, intermediate certificate {...}, and root certificate {Let's Encrypt, DigiCert}
+                *_ Disallow certificates outside of {valid-from} to {valid-until}
+                *_ Ensure the certificate is rotated every {365} days
+            *_ API key
+            *_ JWT token
+            *_ OAuth token
         *[#FFBBCC] threat
             *_ Session id management
                 *_ Ensure existing session identifier is replaced with a new session identifier after step-up authentication
