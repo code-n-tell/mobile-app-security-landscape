@@ -16,6 +16,7 @@ lowest form w/o security
 - transfer-funds: account-number, monetary-amount > api > database
 - update-transfer-funds-limit: monetary-amount > api > database
 - transfer-funds-overseas: monetary-amount, -currency > api > database
+- send-message: message > api > database-relational (android keystore, ios keychain)
 - get-premium: username > api > database
 - update-preferences: language > api > database-key-value
 - web-browsing: url-link > api > web-view, browser > dns-server > web-server
@@ -33,6 +34,29 @@ lowest form w/o security
     *[#FFFFE0] session-id
     *[#FFFFE0] url-link
     *[#FFFFE0] language
+    *[#ADD8E6] message
+        *[#FFBBCC] man-in-the-middle
+            *_ End-to-end encryption (E2EE)
+                *_ Crytpgraphic key lifecycle
+                    *_ Generation
+                        *_ Disallow key generation from static device identifiers, like {IMEI, MAC address, phone number}
+                        *_ Ensure key generation from secure cryptographic libraries and modules, like {Android's Keystore, iOS's Keychain}
+                        *_ Ensure that each key is used for {1} purpose, like {encryption, authentication, key wrapping, random number generation, digital signature}
+                        *_ Ensure domain parameters are stored {not permanently}
+                    *_ Storage
+                        *_ Disallow storing keys in plaintext
+                        *_ Disallow hardcoding keys in source code
+                        *_ Ensure keys are stored in secure storage, like {HSM, key vaults}
+                        *_ Ensure keys are integrity protected, like {encryption, hashed} 
+                    *_ Distribution
+                        *_ Ensure keys are transported over secure channels, like {TLS, SSH}
+                        *_ Ensure keys are imported from trusted sources, like {HSM}
+                        *_ Ensure the use of the Elliptic Curve Diffie-Hellman Ephemeral (ECDHE) protocol's secure curves, like {secp521r1 (P-521), secp384r1 (P-384), secp256r1 (P-256), brainpoolP512r1, brainpoolP384r1, brainpoolP320r1, brainpoolP256r1}
+                        *_ Ensure the use of the Finite Field Diffie-Hellman Ephemeral (FFDHE) protocol's secure groups, like {ffdhe8192 (ID = 260), ffdhe6144 (ID = 259), ffdhe4096 (ID = 258), or ffdhe3072 (ID = 257)}
+                        *_ Ensure the use of the Finite Field Diffie-Hellman (FFDH) protocol's secure groups, like {MODP-8192 (ID=18), MODP-6144 (ID=17), MODP-4096 (ID=16), or MODP-3072 (ID=15)}
+                    *_ Deletion
+                        *_ Ensure keys are rotated every {365} days
+                        *_ Ensure keys are invalidated when {compromised, multi-purpose, not in use}
     *[#FFFFE0] app-manifest
         *[#FFBBCC] threat
             *_ Disallow {CAMERA, LOCATION, MICROPHONE} permissions granted at intall-time
@@ -138,15 +162,33 @@ lowest form w/o security
             *_ Ensure numeric inputs fall within a range of {n} to {m}
             *_ Disallow the inclusion of sensitive data in the output, like {username, password} 
         *[#FFBBCC] man-in-the-middle
-            *_ Disallow protocols, like {HTTP}
-            *_ Ensure the use of protocols, like {HTTPs}
+            *_ Transport layer security
+                *_ Disallow protocols, like {HTTP}
+                *_ Ensure the use of protocols, like {HTTPs}
+                *_ Ensure the use of algorithms, like {TLS_AES_256_GCM_SHA384, TLS_AES_128_GCM_SHA256, TLS_AES_128_CCM_SHA256}
+                *_ SSL/TLS certificates
+                    *_ Ensure certificates are issued by a trusted Certificate Authority (CA) at all levels of the chain: leaf certificate {...}, intermediate certificate {...}, and root certificate {Let's Encrypt, DigiCert}
+                    *_ Disallow certificates outside of {valid-from} to {valid-until}
+                    *_ Ensure the certificate is rotated every {365} days
             *_ Cipher suite
                 *_ Disallow algorithms that are {outdated with known vulnerabilities, formally deprecated}, like {RC4}
-                *_ Ensure the use of algorithms, like {TLS_AES_256_GCM_SHA384, TLS_AES_128_GCM_SHA256, TLS_AES_128_CCM_SHA256}
-            *_ SSL/TLS certificate
-                *_ Ensure certificates are issued by a trusted Certificate Authority (CA) at all levels of the chain: leaf certificate {...}, intermediate certificate {...}, and root certificate {Let's Encrypt, DigiCert}
-                *_ Disallow certificates outside of {valid-from} to {valid-until}
-                *_ Ensure the certificate is rotated every {365} days
+                *_ Key exchange
+                    *_ Ensure perfect forward secrecy (pfs) is enabled
+                *_ Authentication
+                *_ Encryption
+                    *_ Symmetric key encryption algorithm
+                        *_ Ensure key size of at least {128} bits
+                        *_ Ensure the use of Advanced Encryption Standard (AES) algorithms, like {AES-256, AES-192, or AES-128}
+                        *_ Ensure the use of modes of operation, like {Galois/Counter Mode(GCM)}
+                    *_ Asymmetric key encryption algorithm
+                        *_ Ensure key size of at least {128} bits
+                        *_ Ensure the use of Elliptic Curve Cryptography (ECC) algorithms, like {P-521, P-384, P-256, Curve25519, Curve448}
+                        *_ Ensure the use of Rivest-Shamir-Adleman (RSA) keys of at least {3072} bits
+                        *_ Ensure the use of Elliptic Curve Cryptography Digital Signature Algorithm (ECDSA), like {secp521r1 (P-521), secp384r1 (P-384), secp256r1 (P-256), brainpoolP512r1, brainpoolP384r1, brainpoolP320r1, brainpoolP256r1}
+                *_ Hash
+                    *_ Ensure the signature is computed using a cryptographically strong algorithm, like {SHA3-512, SHA3-384, SHA3-256, SHA2-512, SHA2-512/256, SHA2-384, or SHA2-256}
+                    *_ Ensure the use of Elliptic Curve Cryptography Digital Signature Algorithm (ECDSA), like {secp521r1 (P-521), secp384r1 (P-384), secp256r1 (P-256), brainpoolP512r1, brainpoolP384r1, brainpoolP320r1, brainpoolP256r1}
+                    *_ Ensure the use of RSA Probabilistic Signature Scheme (RSA-PSS) keys of at least {3072} bits
             *_ API key
             *_ JWT token
             *_ OAuth token
@@ -176,9 +218,11 @@ lowest form w/o security
     *[#90EE90] database-key-value (sharedpreferences)
         *[#FFBBCC] threat
             *_ Ensure user-related preference is deleted {n} days after {m} requests
-    *[#90EE90] database-relational (MySQL)
+    *[#90EE90] database-relational (MySQL, SQLite)
         *[#FFBBCC] threat
             *_ Ensure user-related records are deleted within {n} seconds after request
+        *[#FFBBCC] threat
+            *_ 
     *[#90EE90] database
         *[#FFBBCC] threat
             *_ Disallow client-side authorisation
