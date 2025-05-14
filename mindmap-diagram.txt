@@ -12,13 +12,14 @@ lowest form w/o security
 - download-app: mobile-device > app-store > app-store-account
 - setup-account: username > api > database
 - sign-in: username > api > database
-- grant-permission: app-manifest > api > dialog
+- grant-permission: app-manifest > api > permission-dialog
 - transfer-funds: account-number, monetary-amount > api > database
 - update-transfer-funds-limit: monetary-amount > api > database
 - transfer-funds-overseas: monetary-amount, -currency > api > database
 - send-message: message > api > database-relational (android keystore, ios keychain)
+- upload-file: file > api > database
 - get-premium: username > api > database
-- update-preferences: language > api > database-key-value
+- update-preferences: language > api > database-key-value > general-dialog
 - web-browsing: url-link > api > web-view, browser > dns-server > web-server
 - delete-account: username > api > database-relational
 - sign-out: session-id > api > database
@@ -34,7 +35,10 @@ lowest form w/o security
     *[#FFFFE0] session-id
     *[#FFFFE0] url-link
     *[#FFFFE0] language
-    *[#ADD8E6] message
+    *[#FFFFE0] file
+        *[#FFBBCC] threat
+            *_ Ensure files of a {.pdf} extension match the MIME type {application/pdf}
+    *[#FFFFE0] message
         *[#FFBBCC] man-in-the-middle
             *_ End-to-end encryption (E2EE)
                 *_ Crytpgraphic key lifecycle
@@ -60,6 +64,7 @@ lowest form w/o security
     *[#FFFFE0] app-manifest
         *[#FFBBCC] threat
             *_ Disallow {CAMERA, LOCATION, MICROPHONE} permissions granted at intall-time
+            *_ Ensure communication with trusted apps, like {duolingo} 
     *[#FFFFE0] username
         *[#FFBBCC] threat
             *_ Ensure username is tokenised with at least {128} bits
@@ -124,8 +129,20 @@ lowest form w/o security
             *_ App integrity check
                 *_ Ensure certificate was issued by a trusted certificate authority, like {Google, Apple}
                 *_ Ensure certificate has not {expired}
+                *_ Ensure the app can run only on a minimum OS version {Android 10, iOS 14}
+                *_ Ensure the app is running on the latest version {11.0}
+                *_ Ensure the app prompts for update if not the latest version {11.0}
+                *_ Disallow the use of wildcard imports, like {import *, from module import *} 
+                *_ Disallow the use of third-party libraries with known vulnerabilities, like {log4j 2.14.1}
+                *_ Ensure dependencies are maintained with regular updates, every {n} days
+                *_ Ensure dependencies have at least {n} users or downloads
+                *_ Ensure debugging and verbose logging are disabled
+                *_ Ensure input methods features are disabled, like {autocorrect, autofill, autosuggestion}
+                *_ Disallow third-party keyboards 
             *_ Device integrity check
                 *_ Ensure secure element, like {Android's Trusty, Apple's Secure Enclave} exists
+                *_ Ensure checks for the device's OS version
+                *_ Disallow app usage for device's OS version that are {outdated with known vulnerabilities, formally deprecated}
     *[#FFFFE0] currency
         *[#FFBBCC] threat
             *_ Ensure overseas transfer is disabled by default
@@ -138,7 +155,10 @@ lowest form w/o security
                 *_ Disallow remote screen sharing
                 *_ Disallow screenshots from being taken
                 *_ Ensure inputs are masked when the app is {backgrounded}
-    *[#ADD8E6] dialog
+    *[#ADD8E6] general-dialog
+        *[#FFBBCC] threat
+            *_ Disallow displaying sensitive data, like {username, password, HTTP status codes} 
+    *[#ADD8E6] permission-dialog
         *[#FFBBCC] threat
             *_ Ensure the name of the permission {CAMERA} is clearly communicated 
             *_ Ensure the explanation for why a permission is needed is clearly communicated, like {to take profile photos}
@@ -150,6 +170,9 @@ lowest form w/o security
         *[#FFBBCC] threat
             *_ Ensure cookies do not persist after app closure
             *_ Ensure cookies with {HttpOnly, Secure} flags enabled
+            *_ Ensure cache-control headers are enabled, like {no-store, no-cache}
+            *_ Ensure Javascript is disabled
+            *_ Disallow users from modifying URLs
     *[#90EE90] application programming interface
         *[#FFBBCC] hooking
             *_ Ensure blocking of code injections, like {DEX loading}
@@ -160,6 +183,9 @@ lowest form w/o security
             *_ Ensure api access is rate limited with {3} tries every {10} minutes
         *[#FFBBCC] injection
             *_ Ensure numeric inputs fall within a range of {n} to {m}
+            *_ Ensure string inputs escape special characters, like {<, >, ", '}
+            *_ Ensure string inputs only accepts {alphanumeric, @gmail}
+            *_ Ensure data inputs fall within a range of {n} to {current day}
             *_ Disallow the inclusion of sensitive data in the output, like {username, password} 
         *[#FFBBCC] man-in-the-middle
             *_ Transport layer security
