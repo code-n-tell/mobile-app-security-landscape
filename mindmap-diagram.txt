@@ -63,7 +63,7 @@ lowest form w/o security
                         *_ Ensure keys are invalidated when {compromised, multi-purpose, not in use}
     *[#FFFFE0] app-manifest
         *[#FFBBCC] threat
-            *_ Disallow {CAMERA, LOCATION, MICROPHONE} permissions granted at intall-time
+            *_ Disallow {CAMERA, LOCATION, MICROPHONE} permissions granted at install-time
             *_ Ensure communication with trusted apps, like {duolingo} 
     *[#FFFFE0] username
         *[#FFBBCC] threat
@@ -241,6 +241,7 @@ lowest form w/o security
                 *_ Ensure tokens are signed using cryptographically strong algorithm, like {HS256}
                 *_ Disallow tokens signed using algorithm, like {none}
                 *_ Ensure user's token is terminated and related data is invalidated after {n} seconds of logout / inactivity / app closure
+                *_ Ensure user's token is signed with a private key that is available on the device
     *[#90EE90] database-key-value (sharedpreferences)
         *[#FFBBCC] threat
             *_ Ensure user-related preference is deleted {n} days after {m} requests
