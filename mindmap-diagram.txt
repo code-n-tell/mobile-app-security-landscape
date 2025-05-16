@@ -8,30 +8,75 @@ node {
 </style>
 
 /'
-lowest form w/o security
+what are things required to make each feature work? w/o security in mind
 - download-app: mobile-device > app-store > app-store-account
-- setup-account: username > api > database
-- sign-in: username > api > database
-- grant-permission: app-manifest > api > permission-dialog
-- transfer-funds: account-number, monetary-amount > api > database
-- update-transfer-funds-limit: monetary-amount > api > database
-- transfer-funds-overseas: monetary-amount, -currency > api > database
-- send-message: message > api > database-relational (android keystore, ios keychain)
-- upload-file: file > api > database
-- get-premium: username > api > database
-- update-preferences: language > api > database-key-value > general-dialog
-- web-browsing: url-link > api > web-view, browser > dns-server > web-server
-- delete-account: username > api > database-relational
-- sign-out: session-id > api > database
+- setup-account: internet-permission > username > HTTP-request/-response > web-server > relational-database
+- sign-in: internet-permission > username > HTTP-request/-response > web-server > relational-database
+- grant-device-permission: camera-permission > consent > OS-api > inter-process-communication  > camera
+- transfer-funds: internet-permission > account-number, monetary-amount > HTTP-request/-response > web-server > relational-database
+- update-transfer-funds-limit: internet-permission > monetary-amount > HTTP-request/-response > web-server > relational-database
+- transfer-funds-overseas: internet-permission > monetary-amount, currency > HTTP-request/-response > web-server > relational-database
+- send-message: internet-permission > text-message > WebSocket-request/-response > web-server > NoSQL-database
+- get-premium: internet-permission > username > HTTP-request/-response > web-server > relational-database
+- update-preferences: internet-permission > language-preference > HTTP-request/-response > web-server > relational-database
+- view-web-content-in-app: url > OS-api > inter-process-communication  > web-view
+- submit-application: internet-permission > file-pdf > HTTP-request/-response > web-server > blob-datastore
+- launch-third-party-app: uri > OS-api > inter-process-communication  > app
+- fetch-from-other-app: consent > OS-api > inter-process-communication > app
+- enable-push-notification: push-notification-permission > consent > OS-api > push-service (APNs, FCM) > HTTP-request > web-server 
+- get-push-notification: device-token, notification-message > web-server > HTTP-request > push-service (APNs, FCM) > OS-api > push-notification
+- share-content: uri > OS-api > inter-process-communication > app
+- paste-content: clipboard-content > OS-api > inter-process-communication > app
+- delete-account: internet-permission > username > HTTP-request/-response > web-server > relational-database
+- sign-out: internet-permission > HTTP-request/-response > web-server
+
+ref: https://docs.flutter.dev/cookbook/networking
+ref: https://reactnative.dev/docs/network
 '/
 
 *[#FFA07A] mobile-app
-    *[#FFFFE0] component, like input
+    *[#FFFFE0] component, like user input
     *[#90EE90] component, like middleware
-    *[#ADD8E6] component, like output
+    *[#ADD8E6] component, like app output
         *[#FFBBCC] threat
             *_ control
                 *_ child-control
+    *[#FFFFE0] internet-permission
+    *[#FFFFE0] camera-permission
+    *[#FFFFE0] push-notification-permission
+    *[#FFFFE0] username
+    *[#FFFFE0] account-number
+    *[#FFFFE0] monetary-amount
+    *[#FFFFE0] currency
+    *[#FFFFE0] text-message
+    *[#FFFFE0] language-preference
+    *[#FFFFE0] file-pdf
+    *[#FFFFE0] consent
+    *[#FFFFE0] clipboard-content
+    
+    *[#90EE90] HTTP-request
+    *[#90EE90] WebSocket-request
+    *[#90EE90] OS-api
+    *[#90EE90] inter-process-communication
+
+    left side
+
+    *[#90EE90] push-service (APNs, FCM)
+    *[#90EE90] web-server
+    *[#90EE90] relational-database
+    *[#90EE90] NoSQL-database
+    *[#90EE90] blob-datastore
+    
+    *[#ADD8E6] HTTP-response
+    *[#ADD8E6] WebSocket-response
+    *[#ADD8E6] general-dialog
+    *[#ADD8E6] web-view
+
+
+
+
+
+
     *[#FFFFE0] session-id
     *[#FFFFE0] url-link
     *[#FFFFE0] language
@@ -249,7 +294,6 @@ lowest form w/o security
         *[#FFBBCC] threat
             *_ Ensure user-related records are deleted within {n} seconds after request
         *[#FFBBCC] threat
-            *_ 
     *[#90EE90] database
         *[#FFBBCC] threat
             *_ Disallow client-side authorisation
