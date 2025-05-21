@@ -32,131 +32,74 @@ what are things required to make each feature work? w/o security in mind
 
 ref: https://docs.flutter.dev/cookbook/networking
 ref: https://reactnative.dev/docs/network
+
+legend:
+- cs: client-side
+- ss: server-side
+example: (cs-database) Ensure ...
+example: (ss-database) Ensure ...
 '/
 
 *[#FFA07A] mobile-app
-    *[#FFFFE0] component, like user input
+    *[#FFFFE0] component, like user input / pre-req
     *[#90EE90] component, like middleware
     *[#ADD8E6] component, like app output
         *[#FFBBCC] threat
             *_ control
                 *_ child-control
+
     *[#FFFFE0] internet-permission
     *[#FFFFE0] camera-permission
+        *[#FFBBCC] privilege-escalation
+            *_ Disallow the permission to be granted at install-time
     *[#FFFFE0] push-notification-permission
     *[#FFFFE0] username
-    *[#FFFFE0] account-number
-    *[#FFFFE0] monetary-amount
-    *[#FFFFE0] currency
-    *[#FFFFE0] text-message
-    *[#FFFFE0] language-preference
-    *[#FFFFE0] file-pdf
-    *[#FFFFE0] consent
-    *[#FFFFE0] clipboard-content
-    
-    *[#90EE90] HTTP-request
-    *[#90EE90] WebSocket-request
-    *[#90EE90] OS-api
-    *[#90EE90] inter-process-communication
-
-    left side
-
-    *[#90EE90] push-service (APNs, FCM)
-    *[#90EE90] web-server
-    *[#90EE90] relational-database
-    *[#90EE90] NoSQL-database
-    *[#90EE90] blob-datastore
-    
-    *[#ADD8E6] HTTP-response
-    *[#ADD8E6] WebSocket-response
-    *[#ADD8E6] general-dialog
-    *[#ADD8E6] web-view
-
-
-
-
-
-
-    *[#FFFFE0] session-id
-    *[#FFFFE0] url-link
-    *[#FFFFE0] language
-    *[#FFFFE0] file
-        *[#FFBBCC] threat
-            *_ Ensure files of a {.pdf} extension match the MIME type {application/pdf}
-    *[#FFFFE0] message
-        *[#FFBBCC] man-in-the-middle
-            *_ End-to-end encryption (E2EE)
-                *_ Crytpgraphic key lifecycle
-                    *_ Generation
-                        *_ Disallow key generation from static device identifiers, like {IMEI, MAC address, phone number}
-                        *_ Ensure key generation from secure cryptographic libraries and modules, like {Android's Keystore, iOS's Keychain}
-                        *_ Ensure that each key is used for {1} purpose, like {encryption, authentication, key wrapping, random number generation, digital signature}
-                        *_ Ensure domain parameters are stored {not permanently}
-                    *_ Storage
-                        *_ Disallow storing keys in plaintext
-                        *_ Disallow hardcoding keys in source code
-                        *_ Ensure keys are stored in secure storage, like {HSM, key vaults}
-                        *_ Ensure keys are integrity protected, like {encryption, hashed} 
-                    *_ Distribution
-                        *_ Ensure keys are transported over secure channels, like {TLS, SSH}
-                        *_ Ensure keys are imported from trusted sources, like {HSM}
-                        *_ Ensure the use of the Elliptic Curve Diffie-Hellman Ephemeral (ECDHE) protocol's secure curves, like {secp521r1 (P-521), secp384r1 (P-384), secp256r1 (P-256), brainpoolP512r1, brainpoolP384r1, brainpoolP320r1, brainpoolP256r1}
-                        *_ Ensure the use of the Finite Field Diffie-Hellman Ephemeral (FFDHE) protocol's secure groups, like {ffdhe8192 (ID = 260), ffdhe6144 (ID = 259), ffdhe4096 (ID = 258), or ffdhe3072 (ID = 257)}
-                        *_ Ensure the use of the Finite Field Diffie-Hellman (FFDH) protocol's secure groups, like {MODP-8192 (ID=18), MODP-6144 (ID=17), MODP-4096 (ID=16), or MODP-3072 (ID=15)}
-                    *_ Deletion
-                        *_ Ensure keys are rotated every {365} days
-                        *_ Ensure keys are invalidated when {compromised, multi-purpose, not in use}
-    *[#FFFFE0] app-manifest
-        *[#FFBBCC] threat
-            *_ Disallow {CAMERA, LOCATION, MICROPHONE} permissions granted at install-time
-            *_ Ensure communication with trusted apps, like {duolingo} 
-    *[#FFFFE0] username
-        *[#FFBBCC] threat
-            *_ Ensure username is tokenised with at least {128} bits
-            *_ Ensure the use of anti-bot mechanisms, like {ReCaptcha}
-        *[#FFBBCC] threat
-            *_ Biometric
-                *_ Ensure cryptographic keys are stored in a {Secure Element}
-                *_ Ensure biometric operations occur within a {Secure Element}
-                *_ Ensure cryptographic keys tied to biometrics are invalidated on biometric changes
-            *_ Password
-                *_ Ensure passwords are hashed with {Argon2id} key derivation function 
-                *_ Ensure passwords are salted randomly with at least {16} bytes
-                *_ Ensure a minimum length of {12} characters
-                *_ Ensure a maximum length of {x} characters
-                *_ Disallow the use of personal details, like {username, password}
-                *_ Disallow the use of sequential patterns, like {123456}
-                *_ Disallow the use of repeated characters, like {aaaaaa}
-                *_ Disallow the use of common words, phrases, or combinations, like {Qwerty123}
-                *_ Ensure the credential is rotated every {365} days
-                *_ Ensure account access is rate limited with {3} tries every {10} minutes
-                *_ Ensure account access is incrementally delayed after {3} consecutive incorrect attempts, with the delay increasing {base delay x multiplier ^ (attempt-1)} each time, capped at {1440} minutes
-                *_ Ensure account access is suspended after {3} consecutive incorrect attempts
-            *_ Multi-factor authentication
-                *_ Ensure at least {2} authentication factors
-            *_ Single sign-on
-            *_ Passkey
-            *_ One-time password
-                *_ Ensure a minimum length of {6} characters
-                *_ Ensure the credential is invalidated every {30} seconds
-                *_ Ensure the credential is invalidated every {3} consecutive incorrect inputs are received
-    *[#FFFFE0] monetary-amount
-        *[#FFBBCC] threat
-            *_ Ensure a {12} hours cooling-off
-            *_ Ensure a transaction exceeding ${n} is confirmed by user response within {n} seconds
-            *_ Ensure account balance is updated within {n} seconds of a transaction
-            *_ Ensure {in-app, email, sms} alerts are enabled
-            *_ Ensure step-up authentication, like {one-time password}
-            *_ Root detection
-                *_ Ensure checks for the presence of {SU, superuser} binaries
-                *_ Ensure checks for the presence of system-level utility apps, like {SuperSU, Magisk Manager, KingRoot}
-                *_ Ensure checks for the presence of custom recovery environment, like {TWRP, Clockwork}
-                *_ Ensure checks for calls to unsafe system APIs, like {exec(), su}
-                *_ Ensure checks for the usage of restricted or system-level APIs
-                *_ Ensure checks for the presence of unofficial app stores, like {Cydia}
-                *_ Ensure checks for the modifications to kernel images, like {/boot.img}
-                *_ Ensure checks for the compromise of critical file system directories, like {/system, /data} 
-            *_ Emulator detection
+        *[#FFBBCC] injection
+            *_ Ensure string inputs escape special characters, like {<, >, ", '}
+            *_ Ensure string inputs only accepts {alphanumeric, @gmail}
+        *[#FFBBCC] bot-enumeration
+            *_ recaptcha
+        *[#FFBBCC] unauthorised-access
+            *_ authentication
+                *_ password
+                    *_ Ensure passwords are hashed with {Argon2id} key derivation function 
+                    *_ Ensure passwords are salted randomly with at least {16} bytes
+                    *_ Ensure a minimum length of {12} characters
+                    *_ Ensure a maximum length of {x} characters
+                    *_ Disallow the use of personal details, like {username, password}
+                    *_ Disallow the use of sequential patterns, like {123456}
+                    *_ Disallow the use of repeated characters, like {aaaaaa}
+                    *_ Disallow the use of common words, phrases, or combinations, like {Qwerty123}
+                    *_ Ensure the credential is rotated every {365} days
+                    *_ Ensure account access is rate limited with {3} tries every {10} minutes
+                    *_ Ensure account access is incrementally delayed after {3} consecutive incorrect attempts, with the delay increasing {base delay x multiplier ^ (attempt-1)} each time, capped at {1440} minutes
+                    *_ Ensure account access is suspended after {3} consecutive incorrect attempts
+                    *_ Disallow other apps to draw overlays over it
+                    *_ Ensure input methods features are disabled, like {autocorrect, autofill, autosuggestion}
+                *_ biometric
+                    *_ Ensure cryptographic keys are stored in a {Secure Element}
+                    *_ Ensure biometric operations occur within a {Secure Element}
+                    *_ Ensure cryptographic keys tied to biometrics are invalidated on biometric changes
+                *_ multi-factor-authentication
+                    *_ Ensure at least {2} authentication factors
+                *_ single-sign-on
+                *_ passkey
+                *_ one-time-password
+                    *_ Ensure a minimum length of {6} characters
+                    *_ Ensure the credential is invalidated every {30} seconds
+                    *_ Ensure the credential is invalidated every {3} consecutive incorrect inputs are received
+            *_ authorisation
+                *_ Disallow client-side authorisation
+                *_ role-based-access-control
+                    *_ Disallow {*} permissions
+                *_ time-based-access-control
+                    *_ Ensure access is from {n} hours to {m} hours
+                *_ context-based-access-control
+                    *_ Ensure checks for context, like {user patterns, user device type, user device location, user device state, user device biometric}
+        *[#FFBBCC] privacy-violation
+            *_ Ensure user-related records are deleted within {n} seconds after request
+        *[#FFBBCC] reverse-engineering
+            *_ emulator-detection
                 *_ Ensure checks for abnormal battery state, like {battery always at 100%, not charging}
                 *_ Ensure checks for abnormal device uptime, like {under 30s}
                 *_ Ensure checks for more than {1} pointer
@@ -167,73 +110,97 @@ ref: https://reactnative.dev/docs/network
                 *_ Ensure checks for emulator fingerprints, like {generic, unknown}
                 *_ Ensure checks for emulator traits, like {Genymotion, ranchu}
                 *_ Ensure checks for emulator services, like {com.genymotion.superuser}
-            *_ Malware detection 
-                *_ Ensure checks for obscured user interface elements
-                *_ Ensure checks for abnormal memory usage patterns, like {unexpected large memory chunks} 
-                *_ Ensure checks for known malware hashes, like {abcdef1234567890abcdef1234567890}
-            *_ App integrity check
-                *_ Ensure certificate was issued by a trusted certificate authority, like {Google, Apple}
-                *_ Ensure certificate has not {expired}
-                *_ Ensure the app can run only on a minimum OS version {Android 10, iOS 14}
-                *_ Ensure the app is running on the latest version {11.0}
-                *_ Ensure the app prompts for update if not the latest version {11.0}
-                *_ Disallow the use of wildcard imports, like {import *, from module import *} 
-                *_ Disallow the use of third-party libraries with known vulnerabilities, like {log4j 2.14.1}
-                *_ Ensure dependencies are maintained with regular updates, every {n} days
-                *_ Ensure dependencies have at least {n} users or downloads
-                *_ Ensure debugging and verbose logging are disabled
-                *_ Ensure input methods features are disabled, like {autocorrect, autofill, autosuggestion}
-                *_ Disallow third-party keyboards 
-            *_ Device integrity check
-                *_ Ensure secure element, like {Android's Trusty, Apple's Secure Enclave} exists
-                *_ Ensure checks for the device's OS version
-                *_ Disallow app usage for device's OS version that are {outdated with known vulnerabilities, formally deprecated}
-    *[#FFFFE0] currency
-        *[#FFBBCC] threat
-            *_ Ensure overseas transfer is disabled by default
-            *_ Ensure overseas transfer is enabled through MFA
     *[#FFFFE0] account-number
-        *[#FFBBCC] threat
-            *_ Disallow displaying sensitive data, like {username, password}
-            *_ Overlay, remote viewing and screenshot prevention
-                *_ Disallow other apps to draw overlays over it  
-                *_ Disallow remote screen sharing
-                *_ Disallow screenshots from being taken
-                *_ Ensure inputs are masked when the app is {backgrounded}
-    *[#ADD8E6] general-dialog
-        *[#FFBBCC] threat
-            *_ Disallow displaying sensitive data, like {username, password, HTTP status codes} 
-    *[#ADD8E6] permission-dialog
-        *[#FFBBCC] threat
-            *_ Ensure the name of the permission {CAMERA} is clearly communicated 
-            *_ Ensure the explanation for why a permission is needed is clearly communicated, like {to take profile photos}
-            *_ Ensure the user benefit of granting a permission is clearly communicated, like {so you can personalise your photos}
-    
-    left side
-
-    *[#90EE90] webview
-        *[#FFBBCC] threat
-            *_ Ensure cookies do not persist after app closure
-            *_ Ensure cookies with {HttpOnly, Secure} flags enabled
-            *_ Ensure cache-control headers are enabled, like {no-store, no-cache}
-            *_ Ensure Javascript is disabled
-            *_ Disallow users from modifying URLs
-    *[#90EE90] application programming interface
-        *[#FFBBCC] hooking
-            *_ Ensure blocking of code injections, like {DEX loading}
-            *_ Ensure the app terminates if its cryptographic signature has been tampered with 
-            *_ Ensure use of memory protection techniques, like {memory region marking}
-            *_ Ensure the app's source code, like {code flow} is obfuscated
-        *[#FFBBCC] denial-of-service
-            *_ Ensure api access is rate limited with {3} tries every {10} minutes
+        *[#FFBBCC] unauthorised-data-exposure
+            *_ Disallow remote screen sharing
+            *_ Disallow screenshots from being taken
+            *_ Ensure inputs are masked when the app is {backgrounded}
+    *[#FFFFE0] monetary-amount
         *[#FFBBCC] injection
             *_ Ensure numeric inputs fall within a range of {n} to {m}
-            *_ Ensure string inputs escape special characters, like {<, >, ", '}
-            *_ Ensure string inputs only accepts {alphanumeric, @gmail}
-            *_ Ensure data inputs fall within a range of {n} to {current day}
-            *_ Disallow the inclusion of sensitive data in the output, like {username, password} 
+        *[#FFBBCC] unauthorised-transfer
+            *_ Ensure a {12} hours cooling-off
+            *_ Ensure a transaction exceeding ${n} is confirmed by user response within {n} seconds
+            *_ Ensure account balance is updated within {n} seconds of a transaction
+            *_ Ensure {in-app, email, sms} alerts are enabled
+            *_ Ensure step-up authentication, like {one-time password}
+    *[#FFFFE0] overseas-monetary-amount
+        *[#FFBBCC] irrecoverable-funds
+            *_ Ensure overseas transfer is disabled by default
+            *_ Ensure overseas transfer is enabled through MFA
+    *[#FFFFE0] currency
+    *[#FFFFE0] text-message
+    *[#FFFFE0] language-preference
+    *[#FFFFE0] file-pdf
+        *[#FFBBCC] cross-site-scripting
+            *_ Ensure files of {.pdf} extension match the MIME type {application/pdf}
+    *[#FFFFE0] consent
+    *[#FFFFE0] clipboard-content
+        *[#FFBBCC] data-leaks
+            *_ Disallow third-party keyboards 
+    
+    *[#90EE90] HTTP-request
+        *[#FFBBCC] session-hijacking
+            *_ session-id-management
+                *_ Ensure session ids are transmitted through HTTP headers like {Authorization}
+                *_ Ensure session ids are used over {HTTPs}
+            *_ session-token-management
+                *_ Ensure tokens are transmitted through HTTP headers like {Authorization}
+                *_ Ensure bearer authentication is used over {HTTPs}
+    *[#90EE90] WebSocket-request
+    *[#90EE90] OS-api
+        *[#90EE90] web-view
+            *[#FFBBCC] code-execution
+                *_ Ensure Javascript is disabled
+    *[#90EE90] inter-process-communication
+
+    left side
+
+    *[#90EE90] operating-system
+        *[#FFBBCC] os-downgrade
+            *_ Ensure checks for the device's OS version
+            *_ Disallow app usage for device's OS version that are {outdated with known vulnerabilities, formally deprecated}
+        *[#FFBBCC] privilege-escalation-thru-jailbreak
+            *_ Ensure secure element, like {Android's Trusty, Apple's Secure Enclave} exists
+            *_ Ensure checks for the presence of {SU, superuser} binaries
+            *_ Ensure checks for the presence of system-level utility apps, like {SuperSU, Magisk Manager, KingRoot}
+            *_ Ensure checks for the presence of custom recovery environment, like {TWRP, Clockwork}
+            *_ Ensure checks for calls to unsafe system APIs, like {exec(), su}
+            *_ Ensure checks for the usage of restricted or system-level APIs
+            *_ Ensure checks for the presence of unofficial app stores, like {Cydia}
+            *_ Ensure checks for the modifications to kernel images, like {/boot.img}
+            *_ Ensure checks for the compromise of critical file system directories, like {/system, /data}
+        *[#FFBBCC] side-loading 
+            *_ Ensure checks for obscured user interface elements
+            *_ Ensure checks for abnormal memory usage patterns, like {unexpected large memory chunks} 
+            *_ Ensure checks for known malware hashes, like {abcdef1234567890abcdef1234567890}
+            *_ Ensure app's certificate was issued by a trusted certificate authority, like {Google, Apple}
+            *_ Ensure app's certificate has not {expired}
+            *_ Ensure the app can run only on a minimum OS version {Android 10, iOS 14}
+            *_ Ensure the app is running on the latest version {11.0}
+            *_ Ensure the app prompts for update if not the latest version {11.0}
+    *[#90EE90] push-service (APNs, FCM)
+    *[#90EE90] web-server
+        *[#FFBBCC] denial-of-service
+            *_ Ensure request is rate limited with {3} tries every {10} minutes
+        *[#FFBBCC] replay-attacks
+            *_ session-id-management
+                *_ Ensure existing session identifier is replaced with a new session identifier after step-up authentication
+                *_ Ensure user session is terminated after {3} consecutive incorrect attempts 
+                *_ Ensure session ids are generated using cryptographically secure random number generator with a minimum of {n}-bits of entropy
+                *_ Ensure session ids are generated using cryptographically strong algorithm, like {SHA-256}
+                *_ Disallow session ids that return HTTP response status code {401, 403}
+                *_ Disallow storing session ids in persistent storage, like {localStorage, sessionStorage}
+                *_ Ensure valid session ids return HTTP response status code {200}
+                *_ Ensure user's session id is terminated and related data is invalidated after {n} seconds of logout / inactivity / app closure
+            *_ session-token-management
+                *_ Ensure tokens are transmitted through HTTP headers like {Authorization}
+                *_ Ensure bearer authentication is used over {HTTPs}
+        *[#FFBBCC] stolen-private-key
+            *_ cipher-suite
+                *_ Ensure the use of TLS cipher suites that offer {perfect forward secrecy}
         *[#FFBBCC] man-in-the-middle
-            *_ Transport layer security
+            *_ transport-layer-security
                 *_ Disallow protocols, like {HTTP}
                 *_ Ensure the use of protocols, like {HTTPs}
                 *_ Ensure the use of algorithms, like {TLS_AES_256_GCM_SHA384, TLS_AES_128_GCM_SHA256, TLS_AES_128_CCM_SHA256}
@@ -241,67 +208,65 @@ ref: https://reactnative.dev/docs/network
                     *_ Ensure certificates are issued by a trusted Certificate Authority (CA) at all levels of the chain: leaf certificate {...}, intermediate certificate {...}, and root certificate {Let's Encrypt, DigiCert}
                     *_ Disallow certificates outside of {valid-from} to {valid-until}
                     *_ Ensure the certificate is rotated every {365} days
-            *_ Cipher suite
+            *_ cipher-suite
                 *_ Disallow algorithms that are {outdated with known vulnerabilities, formally deprecated}, like {RC4}
-                *_ Key exchange
-                    *_ Ensure perfect forward secrecy (pfs) is enabled
                 *_ Authentication
                 *_ Encryption
-                    *_ Symmetric key encryption algorithm
+                    *_ symmetric-key-encryption-algorithm
                         *_ Ensure key size of at least {128} bits
                         *_ Ensure the use of Advanced Encryption Standard (AES) algorithms, like {AES-256, AES-192, or AES-128}
                         *_ Ensure the use of modes of operation, like {Galois/Counter Mode(GCM)}
-                    *_ Asymmetric key encryption algorithm
+                    *_ asymmetric-key-encryption-algorithm
                         *_ Ensure key size of at least {128} bits
                         *_ Ensure the use of Elliptic Curve Cryptography (ECC) algorithms, like {P-521, P-384, P-256, Curve25519, Curve448}
                         *_ Ensure the use of Rivest-Shamir-Adleman (RSA) keys of at least {3072} bits
                         *_ Ensure the use of Elliptic Curve Cryptography Digital Signature Algorithm (ECDSA), like {secp521r1 (P-521), secp384r1 (P-384), secp256r1 (P-256), brainpoolP512r1, brainpoolP384r1, brainpoolP320r1, brainpoolP256r1}
                 *_ Hash
+                    *_ Ensure the app terminates if its cryptographic signature has been tampered with
                     *_ Ensure the signature is computed using a cryptographically strong algorithm, like {SHA3-512, SHA3-384, SHA3-256, SHA2-512, SHA2-512/256, SHA2-384, or SHA2-256}
                     *_ Ensure the use of Elliptic Curve Cryptography Digital Signature Algorithm (ECDSA), like {secp521r1 (P-521), secp384r1 (P-384), secp256r1 (P-256), brainpoolP512r1, brainpoolP384r1, brainpoolP320r1, brainpoolP256r1}
                     *_ Ensure the use of RSA Probabilistic Signature Scheme (RSA-PSS) keys of at least {3072} bits
-            *_ API key
-            *_ JWT token
-            *_ OAuth token
-        *[#FFBBCC] threat
-            *_ Session id management
-                *_ Ensure existing session identifier is replaced with a new session identifier after step-up authentication
-                *_ Ensure user session is terminated after {3} consecutive incorrect attempts
-                *_ Disallow session ids that return HTTP response status code {401, 403} 
-                *_ Ensure session ids are generated using cryptographically secure random number generator with a minimum of {n}-bits of entropy
-                *_ Ensure session ids are transmitted through HTTP headers like {Authorization}
-                *_ Ensure session ids are generated using cryptographically strong algorithm, like {SHA-256}
-                *_ Ensure session ids are used over {HTTPs}
-                *_ Disallow storing session ids in persistent storage, like {localStorage, sessionStorage}
-                *_ Ensure valid session ids return HTTP response status code {200}
-                *_ Ensure user's session id is terminated and related data is invalidated after {n} seconds of logout / inactivity / app closure
-            *_ Session token management
-                *_ Disallow tokens that return HTTP response status code {401, 403}
-                *_ Ensure tokens are generated using cryptographically secure random number generator with a minimum of {n}-bits of entropy
-                *_ Ensure tokens are transmitted through HTTP headers like {Authorization}
-                *_ Ensure bearer authentication is used over {HTTPs}
-                *_ Disallow the inclusion of sensitive data in a token, like {username, password}
-                *_ Disallow storing tokens in persistent storage, like {localStorage, sessionStorage}
-                *_ Ensure valid tokens return HTTP response status code {200}
-                *_ Ensure tokens are signed using cryptographically strong algorithm, like {HS256}
-                *_ Disallow tokens signed using algorithm, like {none}
-                *_ Ensure user's token is terminated and related data is invalidated after {n} seconds of logout / inactivity / app closure
-                *_ Ensure user's token is signed with a private key that is available on the device
-    *[#90EE90] database-key-value (sharedpreferences)
-        *[#FFBBCC] threat
-            *_ Ensure user-related preference is deleted {n} days after {m} requests
-    *[#90EE90] database-relational (MySQL, SQLite)
-        *[#FFBBCC] threat
-            *_ Ensure user-related records are deleted within {n} seconds after request
-        *[#FFBBCC] threat
-    *[#90EE90] database
-        *[#FFBBCC] threat
-            *_ Disallow client-side authorisation
-            *_ Role-based access control
-                *_ Disallow {*} permissions
-            *_ Time-based access control
-                *_ Ensure access is from {n} hours to {m} hours
-            *_ Context-based access control
-                *_ Ensure checks for context, like {user patterns, user device type, user device location, user device state, user device biometric}
+            *_ crytpgraphic-key-lifecycle
+                *_ generation
+                    *_ Disallow key generation from static device identifiers, like {IMEI, MAC address, phone number}
+                    *_ Ensure key generation from secure cryptographic libraries and modules, like {Android's Keystore, iOS's Keychain}
+                    *_ Ensure that each key is used for {1} purpose, like {encryption, authentication, key wrapping, random number generation, digital signature}
+                    *_ Ensure domain parameters are stored {not permanently}
+                *_ storage
+                    *_ Disallow storing keys in plaintext
+                    *_ Disallow hardcoding keys in source code
+                    *_ Ensure keys are stored in secure storage, like {HSM, key vaults}
+                    *_ Ensure keys are integrity protected, like {encryption, hashed} 
+                *_ distribution
+                    *_ Ensure keys are transported over secure channels, like {TLS, SSH}
+                    *_ Ensure keys are imported from trusted sources, like {HSM}
+                    *_ Ensure the use of the Elliptic Curve Diffie-Hellman Ephemeral (ECDHE) protocol's secure curves, like {secp521r1 (P-521), secp384r1 (P-384), secp256r1 (P-256), brainpoolP512r1, brainpoolP384r1, brainpoolP320r1, brainpoolP256r1}
+                    *_ Ensure the use of the Finite Field Diffie-Hellman Ephemeral (FFDHE) protocol's secure groups, like {ffdhe8192 (ID = 260), ffdhe6144 (ID = 259), ffdhe4096 (ID = 258), or ffdhe3072 (ID = 257)}
+                    *_ Ensure the use of the Finite Field Diffie-Hellman (FFDH) protocol's secure groups, like {MODP-8192 (ID=18), MODP-6144 (ID=17), MODP-4096 (ID=16), or MODP-3072 (ID=15)}
+                *_ deletion
+                    *_ Ensure keys are rotated every {365} days
+                    *_ Ensure keys are invalidated when {compromised, multi-purpose, not in use}
+    *[#90EE90] relational-database
+    *[#90EE90] NoSQL-database
+    *[#90EE90] blob-datastore
+    
+    *[#ADD8E6] HTTP-response
+    *[#ADD8E6] WebSocket-response
+    *[#ADD8E6] general-dialog
+        *[#FFBBCC] data-leak
+            *_ Disallow displaying sensitive data, like {username, password, HTTP status codes} 
+        *[#FFBBCC] privilege-escalation
+            *_ Ensure the name of the permission {CAMERA} is clearly communicated 
+            *_ Ensure the explanation for why a permission is needed is clearly communicated, like {to take profile photos}
+            *_ Ensure the user benefit of granting a permission is clearly communicated, like {so you can personalise your photos}
+    *[#ADD8E6] web-view
+        *[#FFBBCC] session-hijacking
+            *_ Ensure cookies do not persist after app closure
+            *_ Ensure cookies with {HttpOnly, Secure} flags enabled
+            *_ Ensure cache-control headers are enabled, like {no-store, no-cache}
+            *_ Disallow users from modifying URLs     
+    *[#ADD8E6] logs
+        *[#FFBBCC] data-leak
+            *_ Disallow displaying sensitive data, like {username, password, HTTP status codes}
 
 @endmindmap
