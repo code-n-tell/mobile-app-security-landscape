@@ -38,22 +38,37 @@ legend:
 - ss: server-side
 example: (cs-database) Ensure ...
 example: (ss-database) Ensure ...
+
+Usually for interactions only
+- Spoofing: How could an attacker pretend to be someone else (e.g., using stolen credentials)?
+- Tampering: How could an attacker modify data in transit or at rest?
+- Repudiation: How could someone deny performing an action without evidence to prove otherwise?
+- Information Disclosure: How could sensitive data be exposed to unauthorised users?
+- Denial of Service (DoS): How could an attacker make the system unavailable to legitimate users?
+- Elevation of Privilege: How could an attacker gain higher access than they should have?
+
+The goal of this exercise is to understand how a mobile app works, does our control make sense or if a control exists
+- develop fast, regardless if you take an open-source, but you must know how it works especially the interactions (e.g. http request)
+- leverage on security testing tools like mobsf rules to identify the controls? we dont invent the wheel, because our team dont have threat intel like the big techs do
+
+Fill up the interactions part first, the rest will follow like rate limiting on http request is implemented on web-server
 '/
 
 *[#FFA07A] mobile-app
-    *[#FFFFE0] component, like user input / pre-req
-    *[#90EE90] component, like middleware
-    *[#ADD8E6] component, like app output
+    *[#BDDDE4] component, user input, like username
+    *[#F2C078] component, interaction, like http request
+    *[#FAEDCA] component, entities, like web server
+    *[#C1DBB3] component, responses, like http response 
         *[#FFBBCC] threat
             *_ control
                 *_ child-control
 
-    *[#FFFFE0] internet-permission
-    *[#FFFFE0] camera-permission
+    *[#BDDDE4] internet-permission
+    *[#BDDDE4] camera-permission
         *[#FFBBCC] privilege-escalation
             *_ Disallow the permission to be granted at install-time
-    *[#FFFFE0] push-notification-permission
-    *[#FFFFE0] username
+    *[#BDDDE4] push-notification-permission
+    *[#BDDDE4] username
         *[#FFBBCC] injection
             *_ Ensure string inputs escape special characters, like {<, >, ", '}
             *_ Ensure string inputs only accepts {alphanumeric, @gmail}
@@ -110,12 +125,12 @@ example: (ss-database) Ensure ...
                 *_ Ensure checks for emulator fingerprints, like {generic, unknown}
                 *_ Ensure checks for emulator traits, like {Genymotion, ranchu}
                 *_ Ensure checks for emulator services, like {com.genymotion.superuser}
-    *[#FFFFE0] account-number
+    *[#BDDDE4] account-number
         *[#FFBBCC] unauthorised-data-exposure
             *_ Disallow remote screen sharing
             *_ Disallow screenshots from being taken
             *_ Ensure inputs are masked when the app is {backgrounded}
-    *[#FFFFE0] monetary-amount
+    *[#BDDDE4] monetary-amount
         *[#FFBBCC] injection
             *_ Ensure numeric inputs fall within a range of {n} to {m}
         *[#FFBBCC] unauthorised-transfer
@@ -124,39 +139,49 @@ example: (ss-database) Ensure ...
             *_ Ensure account balance is updated within {n} seconds of a transaction
             *_ Ensure {in-app, email, sms} alerts are enabled
             *_ Ensure step-up authentication, like {one-time password}
-    *[#FFFFE0] overseas-monetary-amount
+    *[#BDDDE4] overseas-monetary-amount
         *[#FFBBCC] irrecoverable-funds
             *_ Ensure overseas transfer is disabled by default
             *_ Ensure overseas transfer is enabled through MFA
-    *[#FFFFE0] currency
-    *[#FFFFE0] text-message
-    *[#FFFFE0] language-preference
-    *[#FFFFE0] file-pdf
+    *[#BDDDE4] currency
+    *[#BDDDE4] text-message
+    *[#BDDDE4] language-preference
+    *[#BDDDE4] file-pdf
         *[#FFBBCC] cross-site-scripting
             *_ Ensure files of {.pdf} extension match the MIME type {application/pdf}
-    *[#FFFFE0] consent
-    *[#FFFFE0] clipboard-content
+    *[#BDDDE4] consent
+    *[#BDDDE4] clipboard-content
         *[#FFBBCC] data-leaks
             *_ Disallow third-party keyboards 
     
-    *[#90EE90] HTTP-request
-        *[#FFBBCC] session-hijacking
+    *[#F2C078] HTTP-request
+        *[#FFBBCC] spoofing: an attacker can replay a stolen session token
+            *_ <u>2fa? How does it get into the request?</u>
+            *_ <u>short session token? How does it get into the request?</u>
+        *[#FFBBCC] tampering: an attacker can intercept and modify request headers in transit
             *_ session-id-management
                 *_ Ensure session ids are transmitted through HTTP headers like {Authorization}
                 *_ Ensure session ids are used over {HTTPs}
             *_ session-token-management
                 *_ Ensure tokens are transmitted through HTTP headers like {Authorization}
                 *_ Ensure bearer authentication is used over {HTTPs}
-    *[#90EE90] WebSocket-request
-    *[#90EE90] OS-api
+        *[#FFBBCC] repudiation: an attacker can deny making the request
+            *_ <u>digital signature? how does it get into the request?</u>
+        *[#FFBBCC] information-disclosure: an attacker can sniff sensitive data sent over http
+            *_ <u>disallow sensitive data in query parameters?</u>
+        *[#FFBBCC] denial-of-service: an attacker can flood a server with http request
+        *[#FFBBCC] elevation-of-privilege: an attacker can change role id
+            *_ <u>disallow role in query parameters?</u>
+    *[#F2C078] WebSocket-request
+    *[#F2C078] OS-api
         *[#90EE90] web-view
             *[#FFBBCC] code-execution
                 *_ Ensure Javascript is disabled
-    *[#90EE90] inter-process-communication
+    *[#F2C078] inter-process-communication
 
     left side
 
-    *[#90EE90] operating-system
+    *[#FAEDCA] operating-system
         *[#FFBBCC] os-downgrade
             *_ Ensure checks for the device's OS version
             *_ Disallow app usage for device's OS version that are {outdated with known vulnerabilities, formally deprecated}
@@ -179,8 +204,8 @@ example: (ss-database) Ensure ...
             *_ Ensure the app can run only on a minimum OS version {Android 10, iOS 14}
             *_ Ensure the app is running on the latest version {11.0}
             *_ Ensure the app prompts for update if not the latest version {11.0}
-    *[#90EE90] push-service (APNs, FCM)
-    *[#90EE90] web-server
+    *[#FAEDCA] push-service (APNs, FCM)
+    *[#FAEDCA] web-server
         *[#FFBBCC] denial-of-service
             *_ Ensure request is rate limited with {3} tries every {10} minutes
         *[#FFBBCC] replay-attacks
@@ -246,26 +271,26 @@ example: (ss-database) Ensure ...
                 *_ deletion
                     *_ Ensure keys are rotated every {365} days
                     *_ Ensure keys are invalidated when {compromised, multi-purpose, not in use}
-    *[#90EE90] relational-database
-    *[#90EE90] NoSQL-database
-    *[#90EE90] blob-datastore
+    *[#FAEDCA] relational-database
+    *[#FAEDCA] NoSQL-database
+    *[#FAEDCA] blob-datastore
     
-    *[#ADD8E6] HTTP-response
-    *[#ADD8E6] WebSocket-response
-    *[#ADD8E6] general-dialog
+    *[#C1DBB3] HTTP-response
+    *[#C1DBB3] WebSocket-response
+    *[#C1DBB3] general-dialog
         *[#FFBBCC] data-leak
             *_ Disallow displaying sensitive data, like {username, password, HTTP status codes} 
         *[#FFBBCC] privilege-escalation
             *_ Ensure the name of the permission {CAMERA} is clearly communicated 
             *_ Ensure the explanation for why a permission is needed is clearly communicated, like {to take profile photos}
             *_ Ensure the user benefit of granting a permission is clearly communicated, like {so you can personalise your photos}
-    *[#ADD8E6] web-view
+    *[#C1DBB3] web-view
         *[#FFBBCC] session-hijacking
             *_ Ensure cookies do not persist after app closure
             *_ Ensure cookies with {HttpOnly, Secure} flags enabled
             *_ Ensure cache-control headers are enabled, like {no-store, no-cache}
             *_ Disallow users from modifying URLs     
-    *[#ADD8E6] logs
+    *[#C1DBB3] logs
         *[#FFBBCC] data-leak
             *_ Disallow displaying sensitive data, like {username, password, HTTP status codes}
 
